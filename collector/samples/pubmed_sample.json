@@ -1,0 +1,334 @@
+﻿{
+    "query":  "diabetes mellitus[Title/Abstract]",
+    "total_results":  313902,
+    "returned_results":  3,
+    "fetched_at":  "2026-06-27T08:27:18.6106629Z",
+    "papers":  [
+                   {
+                       "pmid":  "42322207",
+                       "pmcid":  "PMC13288718",
+                       "doi":  "10.1080/19932820.2026.2690694",
+                       "title":  "Association between serum iodine and thyroid function in Malagasy adults: a cross-sectional study in a tertiary-level hospital in Antananarivo, Madagascar.",
+                       "abstract":  "Iodine status and thyroid disorders remain understudied subjects in low-income countries such as ours. The objectives of the present study were to assess the serum iodine (SI) level and thyroid function in Malagasy adults seen at the Soavinandriana Hospital Center in Antananarivo and to determine the association between high levels of serum iodine (HLSI) and dysthyroidism. This cross-sectional study was conducted over the course of two years (September 1, 2021 to August 31, 2023). The SI was used as a proxy for iodine status in the absence of urinary assays. Thyroid function was assessed by thyroid stimulating hormone (TSH) and free tetra-iodothyronine (fT4). The HLSI was defined by the total serum iodine \u003e100 µg/L. Dysthyroidism was defined by abnormal TSH and/or fT4 levels indicative of hypo- or hyperthyroidism. Among 195 patients, the prevalences of serum iodine excess and dysthyroidism were 12.8% and 15.4%, respectively. HLSI was significantly more common in subjects \u003c60 years old (p-value \u003c 0.0001), and less common in those with hypertension (p-value \u003c 0.0001), dyslipidemia (p-value \u003c 0.0001), diabetes mellitus (p-value = 0.0082) and ex-smoking (p-value \u003c 0.0001). Adjusted for age and gender, the association between HLSI and dysthyroidism was significant (OR = 108 [17-680]). HLSI and dysthyroidism were prevalent among Malagasy adults. The presence of one condition would encourage the search for the other. Their management is primarily preventive through their periodic monitoring.",
+                       "journal":  {
+                                       "title":  "The Libyan journal of medicine",
+                                       "iso_abbreviation":  "Libyan J Med",
+                                       "issn":  "1819-6357"
+                                   },
+                       "publication_date":  {
+                                                "year":  "2026",
+                                                "month":  "Dec",
+                                                "day":  "31",
+                                                "medline_date":  null
+                                            },
+                       "authors":  [
+                                       {
+                                           "last_name":  "Raharinavalona",
+                                           "fore_name":  "Sitraka Angelo",
+                                           "initials":  "SA",
+                                           "affiliations":  [
+                                                                "Cardiovascular Diseases and Internal Medicine Departments, Soavinandriana Hospital Center, Antananarivo, Madagascar."
+                                                            ]
+                                       },
+                                       {
+                                           "last_name":  "Raherison",
+                                           "fore_name":  "Rija Eric",
+                                           "initials":  "RE",
+                                           "affiliations":  [
+                                                                "Endocrinology Department, Joseph Raseta Befelatanana University Hospital Center, Antananarivo, Madagascar."
+                                                            ]
+                                       },
+                                       {
+                                           "last_name":  "Razanamparany",
+                                           "fore_name":  "Thierry",
+                                           "initials":  "T",
+                                           "affiliations":  [
+                                                                "Endocrinology Department, Joseph Raseta Befelatanana University Hospital Center, Antananarivo, Madagascar."
+                                                            ]
+                                       },
+                                       {
+                                           "last_name":  "Ratojoniaina",
+                                           "fore_name":  "Maminirina",
+                                           "initials":  "M",
+                                           "affiliations":  [
+                                                                "Cardiovascular Diseases and Internal Medicine Departments, Soavinandriana Hospital Center, Antananarivo, Madagascar."
+                                                            ]
+                                       },
+                                       {
+                                           "last_name":  "Rakotomalala",
+                                           "fore_name":  "Andrianirina Dave Patrick",
+                                           "initials":  "ADP",
+                                           "affiliations":  [
+                                                                "Endocrinology Department, Joseph Raseta Befelatanana University Hospital Center, Antananarivo, Madagascar."
+                                                            ]
+                                       }
+                                   ],
+                       "keywords":  [
+                                        "Dysthyroidism",
+                                        "Malagasy",
+                                        "high level of serum iodine",
+                                        "serum iodine",
+                                        "thyroid function"
+                                    ],
+                       "mesh_terms":  [
+                                          "Humans",
+                                          "Cross-Sectional Studies",
+                                          "Female",
+                                          "Iodine",
+                                          "Male",
+                                          "Adult",
+                                          "Madagascar",
+                                          "Middle Aged",
+                                          "Thyrotropin",
+                                          "Tertiary Care Centers",
+                                          "Thyroid Function Tests",
+                                          "Thyroid Gland",
+                                          "Thyroxine",
+                                          "Thyroid Diseases",
+                                          "Prevalence",
+                                          "Hypothyroidism"
+                                      ],
+                       "language":  "eng",
+                       "source":  "pubmed"
+                   },
+                   {
+                       "pmid":  "42101192",
+                       "pmcid":  null,
+                       "doi":  "10.1080/09513590.2026.2668870",
+                       "title":  "Inflammatory markers mediate the association of the Zhejiang University index with gestational diabetes mellitus: data from NHANES 2007-2020.",
+                       "abstract":  "Gestational diabetes mellitus (GDM) threatens maternal and infant health, yet early prediction is challenging. The Zhejiang University (ZJU) index, reflecting insulin resistance and hepatic lipid metabolism, predicts metabolic diseases, but its role in GDM across multiethnic populations is unclear.\nThis study analyzed NHANES 2007-2020 data from US women aged 20-45. Weighted logistic regression, restricted cubic spline (RCS), subgroup, and ROC analyses assessed ZJU index and GDM. Mediation analysis evaluated inflammatory ratios. Sensitivity analysis excluded women with chronic diseases or medication use.\nAmong 2240 women, 10% had GDM. Higher ZJU index was linearly associated with increased GDM risk; highest quartile had over twice the odds (OR = 2.25, 95% CI: 1.10-3.41). ZJU index outperformed BMI, FPG, ALT, AST (AUC = 0.718). PHR and LHR partially mediated the association. Sensitivity analysis confirmed robustness.\nZJU index is a strong, independent predictor of GDM, outperforming traditional markers. HDL‑related inflammatory markers partially mediate this association, suggesting immunometabolic pathways. Further studies are needed for validation in broader populations.",
+                       "journal":  {
+                                       "title":  "Gynecological endocrinology : the official journal of the International Society of Gynecological Endocrinology",
+                                       "iso_abbreviation":  "Gynecol Endocrinol",
+                                       "issn":  "1473-0766"
+                                   },
+                       "publication_date":  {
+                                                "year":  "2026",
+                                                "month":  "Dec",
+                                                "day":  "31",
+                                                "medline_date":  null
+                                            },
+                       "authors":  [
+                                       {
+                                           "last_name":  "Ye",
+                                           "fore_name":  "Mengmeng",
+                                           "initials":  "M",
+                                           "affiliations":  [
+                                                                "Department of Obstetrics and Gynecology, Affiliated Hospital of Jiangnan University, Wuxi, Jiangsu, People\u0027s Republic of China."
+                                                            ]
+                                       },
+                                       {
+                                           "last_name":  "Wu",
+                                           "fore_name":  "Haochan",
+                                           "initials":  "H",
+                                           "affiliations":  [
+                                                                "Department of Obstetrics and Gynecology, Affiliated Hospital of Jiangnan University, Wuxi, Jiangsu, People\u0027s Republic of China."
+                                                            ]
+                                       },
+                                       {
+                                           "last_name":  "Shan",
+                                           "fore_name":  "Fangfang",
+                                           "initials":  "F",
+                                           "affiliations":  [
+                                                                "Department of Obstetrics and Gynecology, Affiliated Hospital of Jiangnan University, Wuxi, Jiangsu, People\u0027s Republic of China."
+                                                            ]
+                                       },
+                                       {
+                                           "last_name":  "Zhou",
+                                           "fore_name":  "Hui",
+                                           "initials":  "H",
+                                           "affiliations":  [
+                                                                "Department of Obstetrics and Gynecology, Affiliated Hospital of Jiangnan University, Wuxi, Jiangsu, People\u0027s Republic of China.",
+                                                                "Human Genetic and Reproduction Center, Affiliated Hospital of Jiangnan University, Wuxi, Jiangsu, People\u0027s Republic of China."
+                                                            ]
+                                       },
+                                       {
+                                           "last_name":  "Yu",
+                                           "fore_name":  "Jinjin",
+                                           "initials":  "J",
+                                           "affiliations":  [
+                                                                "Department of Obstetrics and Gynecology, Affiliated Hospital of Jiangnan University, Wuxi, Jiangsu, People\u0027s Republic of China."
+                                                            ]
+                                       },
+                                       {
+                                           "last_name":  "Wu",
+                                           "fore_name":  "Yibo",
+                                           "initials":  "Y",
+                                           "affiliations":  [
+                                                                "Department of Obstetrics and Gynecology, Affiliated Hospital of Jiangnan University, Wuxi, Jiangsu, People\u0027s Republic of China.",
+                                                                "Human Genetic and Reproduction Center, Affiliated Hospital of Jiangnan University, Wuxi, Jiangsu, People\u0027s Republic of China."
+                                                            ]
+                                       },
+                                       {
+                                           "last_name":  "Hao",
+                                           "fore_name":  "Tingting",
+                                           "initials":  "T",
+                                           "affiliations":  [
+                                                                "Department of Laboratory Medicine, Affiliated Hospital of Xuzhou Medical University, Xuzhou, Jiangsu, People\u0027s Republic of China."
+                                                            ]
+                                       }
+                                   ],
+                       "keywords":  [
+                                        "Zhejiang University (ZJU) index",
+                                        "gestational diabetes mellitus (GDM)",
+                                        "inflammation",
+                                        "lymphocyte-to-HDL ratio (LHR)",
+                                        "platelet-to-HDL ratio (PHR)"
+                                    ],
+                       "mesh_terms":  [
+                                          "Humans",
+                                          "Female",
+                                          "Diabetes, Gestational",
+                                          "Pregnancy",
+                                          "Adult",
+                                          "Biomarkers",
+                                          "Nutrition Surveys",
+                                          "Insulin Resistance",
+                                          "Inflammation",
+                                          "Young Adult",
+                                          "United States"
+                                      ],
+                       "language":  "eng",
+                       "source":  "pubmed"
+                   },
+                   {
+                       "pmid":  "42096241",
+                       "pmcid":  "PMC13166181",
+                       "doi":  "10.1080/19382014.2026.2671454",
+                       "title":  "A geometry-informed continuous 3D IEQ framework enables more accurate dose estimation in stem cell-derived islet transplantation.",
+                       "abstract":  "Accurate quantification of islet mass is critical for the preclinical evaluation and therapeutic application of stem cell-derived pancreatic islet organoids. Traditional methods, including Ricordi\u0027s islet equivalent (IEQ) approach and its equivalent circle diameter adaptations, often overestimate islet volume due to reliance on maximal diameters and discrete size bins. To address these limitations, we developed an automated image segmentation and three-dimensional modeling framework to quantify individual islet clusters from brightfield images. Clusters were fitted with ellipses and modeled as ellipsoids using rotation about either the minor or major axis, allowing IEQs to be calculated continuously relative to a reference 150 μm spherical islet. Major-axis (prolate) rotation provided the most conservative and physically plausible volume estimates, whereas minor-axis (oblate) rotation and diameter-based approaches systematically overestimated IEQs. Functional assessment with glucose-stimulated insulin secretion assays across multiple size categories demonstrated consistent insulin output for clusters below 250 μm, supporting the reproducibility of our 3D differentiation system. In vivo, streptozotocin-induced diabetic mice transplanted with islet doses based on major-axis modeling exhibited faster and more stable restoration of glycemia compared with groups receiving doses derived from overestimated approaches. These findings establish that major-axis ellipsoid modeling offers a mathematically consistent, conservative, and biologically relevant method for estimating IEQs, providing a practical framework to guide dosing in preclinical studies and supporting the translational development of stem cell-derived islet therapies.",
+                       "journal":  {
+                                       "title":  "Islets",
+                                       "iso_abbreviation":  "Islets",
+                                       "issn":  "1938-2022"
+                                   },
+                       "publication_date":  {
+                                                "year":  "2026",
+                                                "month":  "Dec",
+                                                "day":  "31",
+                                                "medline_date":  null
+                                            },
+                       "authors":  [
+                                       {
+                                           "last_name":  "Lu",
+                                           "fore_name":  "Yu",
+                                           "initials":  "Y",
+                                           "affiliations":  [
+                                                                "Beijing Essentia Biosciences, Daxing Airport International Biomedical Park, Beijing, People\u0027s Republic of China.",
+                                                                "Aceso Biosciences, The EpiCentre, Haverhill, Cambridge, UK."
+                                                            ]
+                                       },
+                                       {
+                                           "last_name":  "Fang",
+                                           "fore_name":  "Jinhui",
+                                           "initials":  "J",
+                                           "affiliations":  [
+                                                                "Beijing Essentia Biosciences, Daxing Airport International Biomedical Park, Beijing, People\u0027s Republic of China."
+                                                            ]
+                                       },
+                                       {
+                                           "last_name":  "Jia",
+                                           "fore_name":  "Zhongyi",
+                                           "initials":  "Z",
+                                           "affiliations":  [
+                                                                "Beijing Essentia Biosciences, Daxing Airport International Biomedical Park, Beijing, People\u0027s Republic of China."
+                                                            ]
+                                       },
+                                       {
+                                           "last_name":  "Yang",
+                                           "fore_name":  "Pei",
+                                           "initials":  "P",
+                                           "affiliations":  [
+                                                                "Beijing Essentia Biosciences, Daxing Airport International Biomedical Park, Beijing, People\u0027s Republic of China."
+                                                            ]
+                                       },
+                                       {
+                                           "last_name":  "Bi",
+                                           "fore_name":  "Songtao",
+                                           "initials":  "S",
+                                           "affiliations":  [
+                                                                "Beijing Essentia Biosciences, Daxing Airport International Biomedical Park, Beijing, People\u0027s Republic of China."
+                                                            ]
+                                       },
+                                       {
+                                           "last_name":  "Liu",
+                                           "fore_name":  "Qianyun",
+                                           "initials":  "Q",
+                                           "affiliations":  [
+                                                                "Beijing Essentia Biosciences, Daxing Airport International Biomedical Park, Beijing, People\u0027s Republic of China."
+                                                            ]
+                                       },
+                                       {
+                                           "last_name":  "Yu",
+                                           "fore_name":  "Zhe",
+                                           "initials":  "Z",
+                                           "affiliations":  [
+                                                                "Beijing Essentia Biosciences, Daxing Airport International Biomedical Park, Beijing, People\u0027s Republic of China."
+                                                            ]
+                                       },
+                                       {
+                                           "last_name":  "Yin",
+                                           "fore_name":  "Jingyi",
+                                           "initials":  "J",
+                                           "affiliations":  [
+                                                                "Beijing Essentia Biosciences, Daxing Airport International Biomedical Park, Beijing, People\u0027s Republic of China."
+                                                            ]
+                                       },
+                                       {
+                                           "last_name":  "Chen",
+                                           "fore_name":  "Limin",
+                                           "initials":  "L",
+                                           "affiliations":  [
+                                                                "Beijing Essentia Biosciences, Daxing Airport International Biomedical Park, Beijing, People\u0027s Republic of China."
+                                                            ]
+                                       },
+                                       {
+                                           "last_name":  "Ricardo",
+                                           "fore_name":  "Rúben A",
+                                           "initials":  "RA",
+                                           "affiliations":  [
+                                                                "Aceso Biosciences, The EpiCentre, Haverhill, Cambridge, UK."
+                                                            ]
+                                       },
+                                       {
+                                           "last_name":  "Singh",
+                                           "fore_name":  "Anup K",
+                                           "initials":  "AK",
+                                           "affiliations":  [
+                                                                "Aceso Biosciences, The EpiCentre, Haverhill, Cambridge, UK."
+                                                            ]
+                                       },
+                                       {
+                                           "last_name":  "Liu",
+                                           "fore_name":  "Tongri",
+                                           "initials":  "T",
+                                           "affiliations":  [
+                                                                "Beijing Essentia Biosciences, Daxing Airport International Biomedical Park, Beijing, People\u0027s Republic of China.",
+                                                                "Aceso Biosciences, The EpiCentre, Haverhill, Cambridge, UK."
+                                                            ]
+                                       }
+                                   ],
+                       "keywords":  [
+                                        "Islet transplantation",
+                                        "diabetes mellitus",
+                                        "dose quantification",
+                                        "ellipsoid modeling",
+                                        "islet equivalents (IEQ)",
+                                        "stem cell-derived islets"
+                                    ],
+                       "mesh_terms":  [
+                                          "Animals",
+                                          "Islets of Langerhans Transplantation",
+                                          "Mice",
+                                          "Islets of Langerhans",
+                                          "Diabetes Mellitus, Experimental",
+                                          "Stem Cells",
+                                          "Imaging, Three-Dimensional",
+                                          "Insulin",
+                                          "Cell Differentiation"
+                                      ],
+                       "language":  "eng",
+                       "source":  "pubmed"
+                   }
+               ]
+}
