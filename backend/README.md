@@ -36,6 +36,15 @@ $env:DB_PASSWORD = "<本机 MySQL 密码>"
 - 应用：`GET http://localhost:8080/api/health`
 - 数据库：`GET http://localhost:8080/api/health/database`
 
+## Paper API
+
+- `GET /api/papers`：分页列表，可选 `keyword`、`year`、`dataSource`
+- `GET /api/papers/{id}`：文献详情
+- `POST /api/papers`：新增文献
+- `PUT /api/papers/{id}`：修改文献
+- `DELETE /api/papers/{id}`：删除文献
+
+所有接口统一返回 `code`、`message`、`data`。
 ## 测试与打包
 
 ```powershell
