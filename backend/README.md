@@ -1,32 +1,33 @@
-﻿# Backend
+# Backend
 
 生物医学文献知识服务与智能综述平台后端，采用 Spring Boot 3.5.15、JDK 17、Maven、Spring Web、MySQL、Lombok 和 MyBatis-Plus 3.5.15。
 
 ## 环境要求
 
 - JDK 17+
-- MySQL 8+
+- MySQL 8.4+（本机服务名：`MySQL84`）
 - 无需预装 Maven，仓库已包含 Maven Wrapper
 
-## 创建数据库
+## 数据库
 
-```sql
-CREATE DATABASE biomedical_literature
-  CHARACTER SET utf8mb4
-  COLLATE utf8mb4_0900_ai_ci;
+数据库名为 `biomed_literature`，初始化脚本位于：
+
+```text
+database/mysql/001_create_database_and_paper.sql
 ```
 
-数据库连接通过环境变量覆盖：
+数据库连接可通过环境变量覆盖：
 
-- `DB_URL`：默认 `jdbc:mysql://localhost:3306/biomedical_literature...`
+- `DB_URL`：默认连接本机 `biomed_literature`
 - `DB_USERNAME`：默认 `root`
-- `DB_PASSWORD`：默认空
+- `DB_PASSWORD`：必须在本地环境设置，不写入 Git
 - `SERVER_PORT`：默认 `8080`
 
 ## 运行
 
 ```powershell
 cd E:\毕业设计\backend
+$env:DB_PASSWORD = "<本机 MySQL 密码>"
 .\mvnw.cmd spring-boot:run
 ```
 
@@ -39,4 +40,4 @@ cd E:\毕业设计\backend
 .\mvnw.cmd clean package
 ```
 
-> 根目录现有 `database/schema.sql` 使用 PostgreSQL 语法，正式采用 MySQL 前需另行转换，不能直接执行。
+> 根目录 `database/schema.sql` 是早期 PostgreSQL 设计稿，不能在 MySQL 中直接执行。
