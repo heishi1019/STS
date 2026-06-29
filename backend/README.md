@@ -31,7 +31,10 @@ $env:DB_PASSWORD = "<本机 MySQL 密码>"
 .\mvnw.cmd spring-boot:run
 ```
 
-健康检查：`GET http://localhost:8080/api/health`
+健康检查：
+
+- 应用：`GET http://localhost:8080/api/health`
+- 数据库：`GET http://localhost:8080/api/health/database`
 
 ## 测试与打包
 
