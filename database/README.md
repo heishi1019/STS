@@ -2,22 +2,28 @@
 
 当前开发数据库为 MySQL 8.4，数据库名为 `biomed_literature`。
 
-## 本机状态
+## 正式初始化入口
 
-- Windows 服务：`MySQL84`
-- 监听地址：`127.0.0.1:3306`
-- 启动类型：自动
-- MySQL 命令目录已加入用户 `PATH`，新终端生效
+`database/schema.sql` 是正式、完整的数据库初始化文件。新环境在项目根目录执行：
 
-## 初始化全部表
+```powershell
+mysql -h 127.0.0.1 -u root -p < database/schema.sql
+```
 
-在项目根目录执行：
+以后新增或修改表结构时，必须同时更新：
+
+1. `database/schema.sql` 全量初始化文件
+2. `database/mysql/` 下对应的编号迁移文件
+
+## 增量迁移
+
+已有数据库可执行：
 
 ```powershell
 mysql -h 127.0.0.1 -u root -p < database/mysql/run_all.sql
 ```
 
-全部脚本均使用 `CREATE TABLE IF NOT EXISTS`，可按编号重复执行：
+编号脚本：
 
 1. `001_create_database_and_paper.sql`：数据库和文献表
 2. `002_create_author.sql`：作者表
@@ -30,4 +36,8 @@ mysql -h 127.0.0.1 -u root -p < database/mysql/run_all.sql
 9. `009_create_topic_paper.sql`：专题文献关联表
 10. `010_create_crawl_task.sql`：采集任务表
 
-`schema.sql` 是早期 PostgreSQL 设计稿，仅供数据模型参考。
+## 本机开发环境
+
+- Windows 服务：`MySQL84`
+- 监听地址：`127.0.0.1:3306`
+- 启动类型：自动
