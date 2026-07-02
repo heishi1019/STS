@@ -1,0 +1,10 @@
+SOURCE database/mysql/001_create_database_and_paper.sql;
+SOURCE database/mysql/002_create_author.sql;
+SOURCE database/mysql/003_create_paper_author.sql;
+SOURCE database/mysql/004_create_keyword.sql;
+SOURCE database/mysql/005_create_paper_keyword.sql;
+SOURCE database/mysql/006_create_tag.sql;
+SOURCE database/mysql/007_create_paper_tag.sql;
+SOURCE database/mysql/008_create_topic.sql;
+SOURCE database/mysql/009_create_topic_paper.sql;
+SOURCE database/mysql/010_create_crawl_task.sql;
