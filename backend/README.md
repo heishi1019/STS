@@ -13,8 +13,10 @@
 数据库名为 `biomed_literature`，初始化脚本位于：
 
 ```text
-database/mysql/001_create_database_and_paper.sql
+database/schema.sql
 ```
+
+`database/schema.sql` 是正式的 MySQL 全量初始化文件；`database/mysql/` 保存按步骤执行的增量脚本。
 
 数据库连接可通过环境变量覆盖：
 
@@ -44,12 +46,31 @@ $env:DB_PASSWORD = "<本机 MySQL 密码>"
 - `PUT /api/papers/{id}`：修改文献
 - `DELETE /api/papers/{id}`：删除文献
 
+## 标签与专题 API
+
+- `GET /api/tags`：标签列表
+- `POST /api/tags`：新增标签
+- `PUT /api/tags/{id}`：修改标签
+- `DELETE /api/tags/{id}`：删除标签
+- `GET /api/topics`：专题列表
+- `POST /api/topics`：新增专题
+- `PUT /api/topics/{id}`：修改专题
+- `DELETE /api/topics/{id}`：删除专题
+
+## 文献关联 API
+
+- `POST /api/papers/{paperId}/tags/{tagId}`：为文献添加标签
+- `DELETE /api/papers/{paperId}/tags/{tagId}`：移除文献标签
+- `GET /api/papers/{paperId}/tags`：查询文献标签
+- `POST /api/topics/{topicId}/papers/{paperId}`：将文献加入专题
+- `DELETE /api/topics/{topicId}/papers/{paperId}`：从专题移除文献
+- `GET /api/topics/{topicId}/papers`：查询专题文献
+
 所有接口统一返回 `code`、`message`、`data`。
+
 ## 测试与打包
 
 ```powershell
 .\mvnw.cmd test
 .\mvnw.cmd clean package
 ```
-
-> 根目录 `database/schema.sql` 是早期 PostgreSQL 设计稿，不能在 MySQL 中直接执行。
