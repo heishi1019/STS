@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.heishi.bioliterature.common.Result;
+import com.heishi.bioliterature.dto.PaperDetailResponse;
 import com.heishi.bioliterature.entity.Paper;
 import com.heishi.bioliterature.service.PaperService;
 import lombok.RequiredArgsConstructor;
@@ -57,11 +58,11 @@ public class PaperController {
     }
 
     @GetMapping("/{id}")
-    public Result<Paper> getById(@PathVariable Long id) {
-        Paper paper = paperService.getById(id);
-        return paper == null
+    public Result<PaperDetailResponse> getById(@PathVariable Long id) {
+        PaperDetailResponse detail = paperService.getDetailById(id);
+        return detail == null
                 ? Result.error(404, "文献不存在")
-                : Result.success(paper);
+                : Result.success("success", detail);
     }
 
     @PostMapping

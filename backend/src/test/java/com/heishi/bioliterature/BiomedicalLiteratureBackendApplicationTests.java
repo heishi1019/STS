@@ -9,6 +9,7 @@ import com.heishi.bioliterature.controller.PaperTagController;
 import com.heishi.bioliterature.controller.TagController;
 import com.heishi.bioliterature.controller.TopicController;
 import com.heishi.bioliterature.controller.TopicPaperController;
+import com.heishi.bioliterature.dto.PaperDetailResponse;
 import com.heishi.bioliterature.entity.Tag;
 import com.heishi.bioliterature.mapper.PaperMapper;
 import com.heishi.bioliterature.service.PaperService;
@@ -82,7 +83,7 @@ class BiomedicalLiteratureBackendApplicationTests {
     @Test
     void missingPaperReturnsNotFoundResult() throws Exception {
         PaperService paperService = mock(PaperService.class);
-        when(paperService.getById(999L)).thenReturn(null);
+        when(paperService.getDetailById(999L)).thenReturn(null);
         MockMvc mockMvc = MockMvcBuilders
                 .standaloneSetup(new PaperController(paperService))
                 .build();
@@ -91,6 +92,47 @@ class BiomedicalLiteratureBackendApplicationTests {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(404))
                 .andExpect(jsonPath("$.message").value("文献不存在"));
+    }
+
+    @Test
+    void paperDetailEndpointReturnsAggregatedData() throws Exception {
+        PaperService paperService = mock(PaperService.class);
+        PaperDetailResponse detail = PaperDetailResponse.builder()
+                .id(1L)
+                .title("文献标题")
+                .abstractText("摘要")
+                .journal("期刊")
+                .publishYear(2024)
+                .doi("10.xxxx")
+                .pmid("123456")
+                .authors(List.of(PaperDetailResponse.AuthorSummary.builder()
+                        .id(1L)
+                        .name("Smith J")
+                        .build()))
+                .keywords(List.of(PaperDetailResponse.KeywordSummary.builder()
+                        .id(1L)
+                        .keyword("diabetes")
+                        .build()))
+                .tags(List.of(PaperDetailResponse.TagSummary.builder()
+                        .id(1L)
+                        .tagName("重点文献")
+                        .color("#409EFF")
+                        .build()))
+                .build();
+        when(paperService.getDetailById(1L)).thenReturn(detail);
+        MockMvc mockMvc = MockMvcBuilders
+                .standaloneSetup(new PaperController(paperService))
+                .build();
+
+        mockMvc.perform(get("/api/papers/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value(200))
+                .andExpect(jsonPath("$.message").value("success"))
+                .andExpect(jsonPath("$.data.publishYear").value(2024))
+                .andExpect(jsonPath("$.data.authors[0].name").value("Smith J"))
+                .andExpect(jsonPath("$.data.keywords[0].keyword").value("diabetes"))
+                .andExpect(jsonPath("$.data.tags[0].tagName").value("重点文献"))
+                .andExpect(jsonPath("$.data.tags[0].color").value("#409EFF"));
     }
 
     @Test

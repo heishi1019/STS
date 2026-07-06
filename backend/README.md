@@ -41,10 +41,47 @@ $env:DB_PASSWORD = "<本机 MySQL 密码>"
 ## Paper API
 
 - `GET /api/papers`：分页列表，可选 `keyword`、`year`、`dataSource`
-- `GET /api/papers/{id}`：文献详情
+- `GET /api/papers/{id}`：文献聚合详情，包含作者、关键词和标签
 - `POST /api/papers`：新增文献
 - `PUT /api/papers/{id}`：修改文献
 - `DELETE /api/papers/{id}`：删除文献
+
+文献详情返回示例：
+
+```json
+{
+  "code": 200,
+  "message": "success",
+  "data": {
+    "id": 1,
+    "title": "文献标题",
+    "abstractText": "摘要",
+    "journal": "期刊",
+    "publishYear": 2024,
+    "doi": "10.xxxx",
+    "pmid": "123456",
+    "authors": [
+      {
+        "id": 1,
+        "name": "Smith J"
+      }
+    ],
+    "keywords": [
+      {
+        "id": 1,
+        "keyword": "diabetes"
+      }
+    ],
+    "tags": [
+      {
+        "id": 1,
+        "tagName": "重点文献",
+        "color": "#409EFF"
+      }
+    ]
+  }
+}
+```
 
 ## 标签与专题 API
 
