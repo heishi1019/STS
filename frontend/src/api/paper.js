@@ -84,6 +84,10 @@ export function deleteTopic(id) {
   return http.delete(`/topics/${id}`)
 }
 
+export function collectPubMed(data) {
+  return http.post('/crawl/pubmed', data)
+}
+
 export function showRequestError(error, fallback = '数据加载失败') {
   ElMessage.error(error?.message || fallback)
 }
@@ -105,5 +109,6 @@ export default {
   createTopic,
   updateTopic,
   deleteTopic,
+  collectPubMed,
   showRequestError,
 }
