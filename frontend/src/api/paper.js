@@ -40,6 +40,18 @@ export function removePaperTag(paperId, tagId) {
   return http.delete(`/papers/${paperId}/tags/${tagId}`)
 }
 
+export function getPaperTopics(paperId) {
+  return http.get(`/papers/${paperId}/topics`)
+}
+
+export function addPaperTopic(paperId, topicId) {
+  return http.post(`/papers/${paperId}/topics/${topicId}`)
+}
+
+export function removePaperTopic(paperId, topicId) {
+  return http.delete(`/papers/${paperId}/topics/${topicId}`)
+}
+
 export function getTags() {
   return http.get('/tags')
 }
@@ -82,6 +94,9 @@ export default {
   getPaperTags,
   addPaperTag,
   removePaperTag,
+  getPaperTopics,
+  addPaperTopic,
+  removePaperTopic,
   getTags,
   createTag,
   updateTag,

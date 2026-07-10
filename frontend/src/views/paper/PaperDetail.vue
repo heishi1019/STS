@@ -71,6 +71,29 @@
           </el-space>
         </section>
 
+        <section class="detail-section">
+          <div class="section-header">
+            <h3>专题</h3>
+            <el-button
+              size="small"
+              type="primary"
+              :loading="topicLoading"
+              @click="openTopicDialog"
+            >
+              管理专题
+            </el-button>
+          </div>
+          <el-space wrap>
+            <el-tag
+              v-for="topic in paperTopics"
+              :key="topic.id || topic.name"
+              type="success"
+            >
+              {{ topic.name || '-' }}
+            </el-tag>
+            <span v-if="paperTopics.length === 0" class="empty-text">暂无专题</span>
+          </el-space>
+        </section>
       </template>
     </div>
 
@@ -120,6 +143,51 @@
       </template>
     </el-dialog>
 
+    <el-dialog
+      v-model="topicDialogVisible"
+      title="管理文献专题"
+      width="520px"
+      destroy-on-close
+      @closed="resetTopicDialog"
+    >
+      <el-alert
+        v-if="allTopics.length === 0"
+        class="state-alert"
+        type="info"
+        title="当前还没有可选专题，请先到专题管理页面新增专题。"
+        show-icon
+        :closable="false"
+      />
+
+      <el-form label-width="90px" @submit.prevent>
+        <el-form-item label="当前专题">
+          <el-select
+            v-model="selectedTopicIds"
+            multiple
+            filterable
+            clearable
+            collapse-tags
+            collapse-tags-tooltip
+            placeholder="请选择一个或多个专题"
+            style="width: 100%"
+          >
+            <el-option
+              v-for="topic in allTopics"
+              :key="topic.id"
+              :label="topic.name"
+              :value="topic.id"
+            />
+          </el-select>
+        </el-form-item>
+      </el-form>
+
+      <template #footer>
+        <el-button :disabled="topicSaving" @click="topicDialogVisible = false">取消</el-button>
+        <el-button type="primary" :loading="topicSaving" @click="savePaperTopics">
+          保存
+        </el-button>
+      </template>
+    </el-dialog>
   </el-card>
 </template>
 
@@ -129,10 +197,14 @@ import { useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
 
 import {
+  addPaperTopic,
   addPaperTag,
   getPaperById,
+  getPaperTopics,
   getPaperTags,
   getTags,
+  getTopics,
+  removePaperTopic,
   removePaperTag,
   showRequestError,
 } from '../../api/paper'
@@ -147,6 +219,13 @@ const tagSaving = ref(false)
 const allTags = ref([])
 const selectedTagIds = ref([])
 const originalTagIds = ref([])
+const paperTopics = ref([])
+const topicLoading = ref(false)
+const topicDialogVisible = ref(false)
+const topicSaving = ref(false)
+const allTopics = ref([])
+const selectedTopicIds = ref([])
+const originalTopicIds = ref([])
 
 let active = true
 
@@ -174,10 +253,14 @@ async function loadPaperDetail() {
     paper.value = result?.data || null
     if (!paper.value) {
       errorMessage.value = '文献不存在'
+      paperTopics.value = []
+    } else {
+      await loadPaperTopics(id)
     }
   } catch (error) {
     if (!active) return
     paper.value = null
+    paperTopics.value = []
     errorMessage.value = error?.message || '文献详情加载失败'
     showRequestError(error, '文献详情加载失败')
   } finally {
@@ -187,6 +270,27 @@ async function loadPaperDetail() {
   }
 }
 
+async function loadPaperTopics(paperId = currentPaperId()) {
+  if (!paperId) {
+    paperTopics.value = []
+    return
+  }
+
+  topicLoading.value = true
+  try {
+    const result = await getPaperTopics(paperId)
+    if (!active) return
+    paperTopics.value = Array.isArray(result?.data) ? result.data : []
+  } catch (error) {
+    if (!active) return
+    paperTopics.value = []
+    showRequestError(error, '文献专题加载失败')
+  } finally {
+    if (active) {
+      topicLoading.value = false
+    }
+  }
+}
 
 async function openTagDialog() {
   const paperId = currentPaperId()
@@ -261,6 +365,78 @@ function resetTagDialog() {
   allTags.value = []
 }
 
+async function openTopicDialog() {
+  const paperId = currentPaperId()
+  if (!paperId) {
+    errorMessage.value = '缺少文献 id'
+    return
+  }
+
+  topicSaving.value = true
+  try {
+    const [topicResult, paperTopicResult] = await Promise.all([
+      getTopics(),
+      getPaperTopics(paperId),
+    ])
+    if (!active) return
+
+    allTopics.value = Array.isArray(topicResult?.data) ? topicResult.data : []
+    const currentTopics = Array.isArray(paperTopicResult?.data) ? paperTopicResult.data : []
+    originalTopicIds.value = currentTopics.map((topic) => topic.id)
+    selectedTopicIds.value = [...originalTopicIds.value]
+    topicDialogVisible.value = true
+  } catch (error) {
+    showRequestError(error, '文献专题加载失败')
+  } finally {
+    if (active) {
+      topicSaving.value = false
+    }
+  }
+}
+
+async function savePaperTopics() {
+  if (topicSaving.value) return
+  const paperId = currentPaperId()
+  if (!paperId) {
+    errorMessage.value = '缺少文献 id'
+    return
+  }
+
+  const selectedSet = new Set(selectedTopicIds.value)
+  const originalSet = new Set(originalTopicIds.value)
+  const toAdd = [...selectedSet].filter((topicId) => !originalSet.has(topicId))
+  const toRemove = [...originalSet].filter((topicId) => !selectedSet.has(topicId))
+
+  if (toAdd.length === 0 && toRemove.length === 0) {
+    ElMessage.info('专题没有变化')
+    topicDialogVisible.value = false
+    return
+  }
+
+  topicSaving.value = true
+  try {
+    await Promise.all([
+      ...toAdd.map((topicId) => addPaperTopic(paperId, topicId)),
+      ...toRemove.map((topicId) => removePaperTopic(paperId, topicId)),
+    ])
+    if (!active) return
+    ElMessage.success('文献专题保存成功')
+    topicDialogVisible.value = false
+    await loadPaperDetail()
+  } catch (error) {
+    showRequestError(error, '文献专题保存失败')
+  } finally {
+    if (active) {
+      topicSaving.value = false
+    }
+  }
+}
+
+function resetTopicDialog() {
+  selectedTopicIds.value = []
+  originalTopicIds.value = []
+  allTopics.value = []
+}
 
 onMounted(loadPaperDetail)
 
