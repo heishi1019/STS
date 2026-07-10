@@ -54,7 +54,10 @@
         </section>
 
         <section class="detail-section">
-          <h3>标签</h3>
+          <div class="section-header">
+            <h3>标签</h3>
+            <el-button size="small" type="primary" @click="openTagDialog">管理标签</el-button>
+          </div>
           <el-space wrap>
             <el-tag
               v-for="tag in tags"
@@ -67,22 +70,83 @@
             <span v-if="tags.length === 0" class="empty-text">暂无标签</span>
           </el-space>
         </section>
+
       </template>
     </div>
+
+    <el-dialog
+      v-model="tagDialogVisible"
+      title="管理文献标签"
+      width="520px"
+      destroy-on-close
+      @closed="resetTagDialog"
+    >
+      <el-alert
+        v-if="allTags.length === 0"
+        class="state-alert"
+        type="info"
+        title="当前还没有可选标签，请先到标签管理页面新增标签。"
+        show-icon
+        :closable="false"
+      />
+
+      <el-form label-width="90px" @submit.prevent>
+        <el-form-item label="当前标签">
+          <el-select
+            v-model="selectedTagIds"
+            multiple
+            filterable
+            clearable
+            collapse-tags
+            collapse-tags-tooltip
+            placeholder="请选择一个或多个标签"
+            style="width: 100%"
+          >
+            <el-option
+              v-for="tag in allTags"
+              :key="tag.id"
+              :label="tag.name"
+              :value="tag.id"
+            />
+          </el-select>
+        </el-form-item>
+      </el-form>
+
+      <template #footer>
+        <el-button :disabled="tagSaving" @click="tagDialogVisible = false">取消</el-button>
+        <el-button type="primary" :loading="tagSaving" @click="savePaperTags">
+          保存
+        </el-button>
+      </template>
+    </el-dialog>
+
   </el-card>
 </template>
 
 <script setup>
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
+import { ElMessage } from 'element-plus'
 
-import { getPaperById, showRequestError } from '../../api/paper'
+import {
+  addPaperTag,
+  getPaperById,
+  getPaperTags,
+  getTags,
+  removePaperTag,
+  showRequestError,
+} from '../../api/paper'
 
 const route = useRoute()
 
 const paper = ref(null)
 const loading = ref(false)
 const errorMessage = ref('')
+const tagDialogVisible = ref(false)
+const tagSaving = ref(false)
+const allTags = ref([])
+const selectedTagIds = ref([])
+const originalTagIds = ref([])
 
 let active = true
 
@@ -90,8 +154,12 @@ const authors = computed(() => (Array.isArray(paper.value?.authors) ? paper.valu
 const keywords = computed(() => (Array.isArray(paper.value?.keywords) ? paper.value.keywords : []))
 const tags = computed(() => (Array.isArray(paper.value?.tags) ? paper.value.tags : []))
 
+function currentPaperId() {
+  return route.params.id
+}
+
 async function loadPaperDetail() {
-  const id = route.params.id
+  const id = currentPaperId()
   if (!id) {
     paper.value = null
     errorMessage.value = '缺少文献 id'
@@ -118,6 +186,81 @@ async function loadPaperDetail() {
     }
   }
 }
+
+
+async function openTagDialog() {
+  const paperId = currentPaperId()
+  if (!paperId) {
+    errorMessage.value = '缺少文献 id'
+    return
+  }
+
+  tagSaving.value = true
+  try {
+    const [tagResult, paperTagResult] = await Promise.all([
+      getTags(),
+      getPaperTags(paperId),
+    ])
+    if (!active) return
+
+    allTags.value = Array.isArray(tagResult?.data) ? tagResult.data : []
+    const currentTags = Array.isArray(paperTagResult?.data) ? paperTagResult.data : []
+    originalTagIds.value = currentTags.map((tag) => tag.id)
+    selectedTagIds.value = [...originalTagIds.value]
+    tagDialogVisible.value = true
+  } catch (error) {
+    showRequestError(error, '文献标签加载失败')
+  } finally {
+    if (active) {
+      tagSaving.value = false
+    }
+  }
+}
+
+async function savePaperTags() {
+  if (tagSaving.value) return
+  const paperId = currentPaperId()
+  if (!paperId) {
+    errorMessage.value = '缺少文献 id'
+    return
+  }
+
+  const selectedSet = new Set(selectedTagIds.value)
+  const originalSet = new Set(originalTagIds.value)
+  const toAdd = [...selectedSet].filter((tagId) => !originalSet.has(tagId))
+  const toRemove = [...originalSet].filter((tagId) => !selectedSet.has(tagId))
+
+  if (toAdd.length === 0 && toRemove.length === 0) {
+    ElMessage.info('标签没有变化')
+    tagDialogVisible.value = false
+    return
+  }
+
+  tagSaving.value = true
+  try {
+    await Promise.all([
+      ...toAdd.map((tagId) => addPaperTag(paperId, tagId)),
+      ...toRemove.map((tagId) => removePaperTag(paperId, tagId)),
+    ])
+    if (!active) return
+    ElMessage.success('文献标签保存成功')
+    tagDialogVisible.value = false
+    await loadPaperDetail()
+  } catch (error) {
+    showRequestError(error, '文献标签保存失败')
+  } finally {
+    if (active) {
+      tagSaving.value = false
+    }
+  }
+}
+
+function resetTagDialog() {
+  selectedTagIds.value = []
+  originalTagIds.value = []
+  allTags.value = []
+}
+
 
 onMounted(loadPaperDetail)
 
@@ -156,6 +299,17 @@ onBeforeUnmount(() => {
   margin: 0 0 12px;
   font-size: 16px;
   color: #111827;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.section-header h3 {
+  margin: 0;
 }
 
 .empty-text {

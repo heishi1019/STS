@@ -28,6 +28,18 @@ export function getPaperById(id) {
   return http.get(`/papers/${id}`)
 }
 
+export function getPaperTags(paperId) {
+  return http.get(`/papers/${paperId}/tags`)
+}
+
+export function addPaperTag(paperId, tagId) {
+  return http.post(`/papers/${paperId}/tags/${tagId}`)
+}
+
+export function removePaperTag(paperId, tagId) {
+  return http.delete(`/papers/${paperId}/tags/${tagId}`)
+}
+
 export function getTags() {
   return http.get('/tags')
 }
@@ -67,6 +79,9 @@ export function showRequestError(error, fallback = '数据加载失败') {
 export default {
   getPapers,
   getPaperById,
+  getPaperTags,
+  addPaperTag,
+  removePaperTag,
   getTags,
   createTag,
   updateTag,
