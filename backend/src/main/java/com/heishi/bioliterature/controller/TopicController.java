@@ -5,7 +5,7 @@ import com.heishi.bioliterature.common.Result;
 import com.heishi.bioliterature.entity.Topic;
 import com.heishi.bioliterature.service.TopicService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DuplicateKeyException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,7 +27,7 @@ public class TopicController {
 
     @GetMapping
     public Result<List<Topic>> list() {
-        return Result.success(topicService.list(
+        return Result.success("success", topicService.list(
                 Wrappers.<Topic>lambdaQuery().orderByAsc(Topic::getName)));
     }
 
@@ -43,7 +43,7 @@ public class TopicController {
         try {
             topicService.save(topic);
             return Result.success("专题创建成功", topicService.getById(topic.getId()));
-        } catch (DuplicateKeyException exception) {
+        } catch (DataIntegrityViolationException exception) {
             return Result.error(409, "专题名称或 slug 已存在");
         }
     }
@@ -61,9 +61,14 @@ public class TopicController {
         topic.setCreatedAt(null);
         topic.setUpdatedAt(null);
         try {
-            topicService.updateById(topic);
+            topicService.update(Wrappers.<Topic>lambdaUpdate()
+                    .eq(Topic::getId, id)
+                    .set(Topic::getName, topic.getName())
+                    .set(Topic::getSlug, topic.getSlug())
+                    .set(Topic::getDescription, topic.getDescription())
+                    .set(Topic::getSearchQuery, topic.getSearchQuery()));
             return Result.success("专题更新成功", topicService.getById(id));
-        } catch (DuplicateKeyException exception) {
+        } catch (DataIntegrityViolationException exception) {
             return Result.error(409, "专题名称或 slug 已存在");
         }
     }
@@ -84,6 +89,12 @@ public class TopicController {
         }
         topic.setName(topic.getName().trim());
         topic.setSlug(topic.getSlug().trim());
+        if (!StringUtils.hasText(topic.getDescription())) {
+            topic.setDescription(null);
+        }
+        if (!StringUtils.hasText(topic.getSearchQuery())) {
+            topic.setSearchQuery(null);
+        }
         return null;
     }
 }

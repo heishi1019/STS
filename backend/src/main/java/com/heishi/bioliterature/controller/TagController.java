@@ -5,7 +5,7 @@ import com.heishi.bioliterature.common.Result;
 import com.heishi.bioliterature.entity.Tag;
 import com.heishi.bioliterature.service.TagService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DuplicateKeyException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,7 +27,7 @@ public class TagController {
 
     @GetMapping
     public Result<List<Tag>> list() {
-        return Result.success(tagService.list(
+        return Result.success("success", tagService.list(
                 Wrappers.<Tag>lambdaQuery().orderByAsc(Tag::getName)));
     }
 
@@ -43,7 +43,7 @@ public class TagController {
         try {
             tagService.save(tag);
             return Result.success("标签创建成功", tagService.getById(tag.getId()));
-        } catch (DuplicateKeyException exception) {
+        } catch (DataIntegrityViolationException exception) {
             return Result.error(409, "标签名称已存在");
         }
     }
@@ -61,9 +61,13 @@ public class TagController {
         tag.setCreatedAt(null);
         tag.setUpdatedAt(null);
         try {
-            tagService.updateById(tag);
+            tagService.update(Wrappers.<Tag>lambdaUpdate()
+                    .eq(Tag::getId, id)
+                    .set(Tag::getName, tag.getName())
+                    .set(Tag::getColor, tag.getColor())
+                    .set(Tag::getDescription, tag.getDescription()));
             return Result.success("标签更新成功", tagService.getById(id));
-        } catch (DuplicateKeyException exception) {
+        } catch (DataIntegrityViolationException exception) {
             return Result.error(409, "标签名称已存在");
         }
     }
@@ -84,6 +88,9 @@ public class TagController {
             return "标签颜色必须是 #RRGGBB 格式";
         }
         tag.setName(tag.getName().trim());
+        if (!StringUtils.hasText(tag.getColor())) {
+            tag.setColor(null);
+        }
         return null;
     }
 }

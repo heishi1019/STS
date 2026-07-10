@@ -8,7 +8,7 @@ import com.heishi.bioliterature.service.PaperService;
 import com.heishi.bioliterature.service.PaperTagService;
 import com.heishi.bioliterature.service.TagService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DuplicateKeyException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -48,7 +48,7 @@ public class PaperTagController {
                     .tagId(tagId)
                     .build());
             return Result.success("标签添加成功", tag);
-        } catch (DuplicateKeyException exception) {
+        } catch (DataIntegrityViolationException exception) {
             return Result.success("文献已包含该标签", tag);
         }
     }
@@ -74,9 +74,9 @@ public class PaperTagController {
                 .map(PaperTag::getTagId)
                 .toList();
         if (tagIds.isEmpty()) {
-            return Result.success(List.of());
+            return Result.success("success", List.of());
         }
-        return Result.success(tagService.list(Wrappers.<Tag>lambdaQuery()
+        return Result.success("success", tagService.list(Wrappers.<Tag>lambdaQuery()
                 .in(Tag::getId, tagIds)
                 .orderByAsc(Tag::getName)));
     }

@@ -1,6 +1,8 @@
 package com.heishi.bioliterature.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.heishi.bioliterature.dto.PaperDetailResponse;
 import com.heishi.bioliterature.entity.Paper;
 import com.heishi.bioliterature.mapper.PaperMapper;
@@ -10,6 +12,35 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements PaperService {
+
+    @Override
+    @Transactional(readOnly = true)
+    public IPage<Paper> searchPage(
+            long page,
+            long size,
+            String title,
+            String author,
+            String keyword,
+            String journal,
+            String doi,
+            String pmid,
+            Integer year,
+            String dataSource,
+            Long tagId,
+            Long topicId) {
+        return baseMapper.searchPapers(
+                Page.of(page, size),
+                trim(title),
+                trim(author),
+                trim(keyword),
+                trim(journal),
+                trim(doi),
+                trim(pmid),
+                year,
+                trim(dataSource),
+                tagId,
+                topicId);
+    }
 
     @Override
     @Transactional(readOnly = true)
@@ -31,5 +62,9 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
                 .keywords(baseMapper.selectKeywordsByPaperId(id))
                 .tags(baseMapper.selectTagsByPaperId(id))
                 .build();
+    }
+
+    private String trim(String value) {
+        return value == null ? null : value.trim();
     }
 }

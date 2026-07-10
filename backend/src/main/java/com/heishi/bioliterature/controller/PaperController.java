@@ -1,9 +1,6 @@
 package com.heishi.bioliterature.controller;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.heishi.bioliterature.common.Result;
 import com.heishi.bioliterature.dto.PaperDetailResponse;
 import com.heishi.bioliterature.entity.Paper;
@@ -33,27 +30,33 @@ public class PaperController {
     public Result<IPage<Paper>> page(
             @RequestParam(defaultValue = "1") long page,
             @RequestParam(defaultValue = "20") long size,
+            @RequestParam(required = false) String title,
+            @RequestParam(required = false) String author,
             @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) String journal,
+            @RequestParam(required = false) String doi,
+            @RequestParam(required = false) String pmid,
             @RequestParam(required = false) Integer year,
-            @RequestParam(required = false) String dataSource) {
+            @RequestParam(required = false) String dataSource,
+            @RequestParam(required = false) Long tagId,
+            @RequestParam(required = false) Long topicId) {
         if (page < 1 || size < 1 || size > MAX_PAGE_SIZE) {
             return Result.error(400, "分页参数不合法：page >= 1，1 <= size <= 100");
         }
 
-        LambdaQueryWrapper<Paper> query = Wrappers.lambdaQuery();
-        if (StringUtils.hasText(keyword)) {
-            query.and(wrapper -> wrapper
-                    .like(Paper::getTitle, keyword.trim())
-                    .or()
-                    .like(Paper::getAbstractText, keyword.trim()));
-        }
-        query.eq(year != null, Paper::getPublicationYear, year)
-                .eq(StringUtils.hasText(dataSource), Paper::getDataSource,
-                        StringUtils.hasText(dataSource) ? dataSource.trim() : null)
-                .orderByDesc(Paper::getPublicationYear)
-                .orderByDesc(Paper::getId);
-
-        IPage<Paper> result = paperService.page(Page.of(page, size), query);
+        IPage<Paper> result = paperService.searchPage(
+                page,
+                size,
+                title,
+                author,
+                keyword,
+                journal,
+                doi,
+                pmid,
+                year,
+                dataSource,
+                tagId,
+                topicId);
         return Result.success(result);
     }
 

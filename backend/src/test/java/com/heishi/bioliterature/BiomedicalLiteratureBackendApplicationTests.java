@@ -25,6 +25,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -67,12 +68,33 @@ class BiomedicalLiteratureBackendApplicationTests {
     void paperPageEndpointReturnsUnifiedResult() throws Exception {
         PaperService paperService = mock(PaperService.class);
         Page emptyPage = Page.of(1, 20);
-        when(paperService.page(any(Page.class), any(Wrapper.class))).thenReturn(emptyPage);
+        when(paperService.searchPage(
+                eq(1L),
+                eq(20L),
+                eq("diabetes"),
+                eq("Smith"),
+                eq("insulin"),
+                eq("Nature"),
+                eq("10."),
+                eq("123456"),
+                eq(2024),
+                isNull(),
+                isNull(),
+                isNull())).thenReturn(emptyPage);
         MockMvc mockMvc = MockMvcBuilders
                 .standaloneSetup(new PaperController(paperService))
                 .build();
 
-        mockMvc.perform(get("/api/papers").param("page", "1").param("size", "20"))
+        mockMvc.perform(get("/api/papers")
+                        .param("page", "1")
+                        .param("size", "20")
+                        .param("title", "diabetes")
+                        .param("author", "Smith")
+                        .param("keyword", "insulin")
+                        .param("journal", "Nature")
+                        .param("doi", "10.")
+                        .param("pmid", "123456")
+                        .param("year", "2024"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(200))
                 .andExpect(jsonPath("$.data.current").value(1))
