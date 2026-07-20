@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import re
 from dataclasses import dataclass
 from datetime import datetime
 from typing import Any
@@ -11,6 +12,34 @@ import mysql.connector
 from mysql.connector import MySQLConnection
 
 from pubmed_client import PubMedClient, PubMedSearchResult
+
+
+ENTITY_DICTIONARY: dict[str, list[str]] = {
+    "DISEASE": [
+        "diabetes",
+        "cancer",
+        "tumor",
+        "tumour",
+        "breast cancer",
+        "lung cancer",
+        "Alzheimer",
+        "Alzheimer's disease",
+        "Parkinson",
+        "COVID-19",
+        "hypertension",
+        "obesity",
+    ],
+    "GENE": ["TP53", "BRCA1", "BRCA2", "EGFR", "APOE", "TNF", "IL6"],
+    "DRUG": [
+        "metformin",
+        "insulin",
+        "aspirin",
+        "pembrolizumab",
+        "nivolumab",
+        "cisplatin",
+    ],
+    "SYMPTOM": ["fever", "pain", "cough", "fatigue", "headache", "dyspnea"],
+}
 
 
 @dataclass(frozen=True)
@@ -209,8 +238,17 @@ class PubMedMySQLCollector:
             cursor.execute(
                 "DELETE FROM paper_keyword WHERE paper_id = %s", (paper_id,)
             )
+            cursor.execute(
+                "DELETE FROM paper_entity WHERE paper_id = %s AND source = 'rule'",
+                (paper_id,),
+            )
+            cursor.execute(
+                "DELETE FROM paper_reference WHERE paper_id = %s", (paper_id,)
+            )
             self._save_authors(cursor, paper_id, paper.get("authors", []))
             self._save_keywords(cursor, paper_id, paper.get("keywords", []))
+            self._save_entities(cursor, paper_id, paper)
+            self._save_references(cursor, paper_id, paper.get("references", []))
             return outcome
         finally:
             cursor.close()
@@ -294,6 +332,89 @@ class PubMedMySQLCollector:
                 VALUES (%s, %s, %s)
                 """,
                 (paper_id, keyword_id, bool(keyword.get("major_topic"))),
+            )
+
+    def _save_entities(self, cursor: Any, paper_id: int, paper: dict[str, Any]) -> None:
+        searchable_text = " ".join(
+            [
+                paper.get("title") or "",
+                paper.get("abstract_text") or "",
+                " ".join(keyword.get("name", "") for keyword in paper.get("keywords", [])),
+            ]
+        ).lower()
+
+        matched: set[tuple[str, str]] = set()
+        for entity_type, names in ENTITY_DICTIONARY.items():
+            for name in names:
+                pattern = r"(?<![A-Za-z0-9])" + re.escape(name.lower()) + r"(?![A-Za-z0-9])"
+                if re.search(pattern, searchable_text):
+                    matched.add((entity_type, name))
+
+        for keyword in paper.get("keywords", []):
+            name = keyword.get("name")
+            if name:
+                matched.add(("KEYWORD", name))
+
+        for entity_type, name in sorted(matched):
+            cursor.execute(
+                """
+                INSERT INTO biomedical_entity (entity_name, entity_type)
+                VALUES (%s, %s)
+                ON DUPLICATE KEY UPDATE id = LAST_INSERT_ID(id)
+                """,
+                (self._limit(name, 255), entity_type),
+            )
+            entity_id = int(cursor.lastrowid)
+            cursor.execute(
+                """
+                INSERT INTO paper_entity (paper_id, entity_id, source, confidence)
+                VALUES (%s, %s, 'rule', %s)
+                ON DUPLICATE KEY UPDATE source = VALUES(source),
+                    confidence = VALUES(confidence)
+                """,
+                (paper_id, entity_id, 0.7),
+            )
+
+    def _save_references(
+        self, cursor: Any, paper_id: int, references: list[dict[str, Any]]
+    ) -> None:
+        for reference in references:
+            cited_pmid = self._limit(reference.get("cited_pmid"), 32)
+            cited_doi = self._limit(reference.get("cited_doi"), 255)
+            cited_paper_id = None
+            if cited_pmid or cited_doi:
+                cursor.execute(
+                    """
+                    SELECT id
+                    FROM paper
+                    WHERE (%s IS NOT NULL AND pmid = %s)
+                       OR (%s IS NOT NULL AND doi = %s)
+                    LIMIT 1
+                    """,
+                    (cited_pmid, cited_pmid, cited_doi, cited_doi),
+                )
+                existing = cursor.fetchone()
+                if existing:
+                    cited_paper_id = int(existing["id"])
+
+            cursor.execute(
+                """
+                INSERT INTO paper_reference (
+                    paper_id, cited_paper_id, cited_pmid, cited_doi, citation_text
+                )
+                VALUES (%s, %s, %s, %s, %s)
+                ON DUPLICATE KEY UPDATE
+                    cited_paper_id = VALUES(cited_paper_id),
+                    cited_doi = COALESCE(VALUES(cited_doi), cited_doi),
+                    citation_text = COALESCE(VALUES(citation_text), citation_text)
+                """,
+                (
+                    paper_id,
+                    cited_paper_id,
+                    cited_pmid,
+                    cited_doi,
+                    reference.get("citation_text"),
+                ),
             )
 
     def _paper_values(self, paper: dict[str, Any]) -> tuple[Any, ...]:

@@ -2,7 +2,10 @@
   <el-card shadow="never" class="page-card">
     <template #header>
       <div class="card-header">
-        <span>标签管理</span>
+        <div>
+          <h2>标签管理</h2>
+          <p>维护文献标签，用于快速标记重点文献、综述素材和待阅读内容。</p>
+        </div>
         <el-button type="primary" @click="openCreateDialog">新增标签</el-button>
       </div>
     </template>
@@ -25,7 +28,7 @@
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="description" label="说明" min-width="240" show-overflow-tooltip>
+      <el-table-column prop="description" label="说明" min-width="260" show-overflow-tooltip>
         <template #default="{ row }">
           {{ row.description || '-' }}
         </template>
@@ -45,17 +48,11 @@
     <el-dialog
       v-model="dialogVisible"
       :title="dialogMode === 'create' ? '新增标签' : '编辑标签'"
-      width="460px"
+      width="480px"
       destroy-on-close
       @closed="resetForm"
     >
-      <el-form
-        ref="formRef"
-        :model="form"
-        :rules="rules"
-        label-width="90px"
-        @submit.prevent
-      >
+      <el-form ref="formRef" :model="form" :rules="rules" label-width="90px" @submit.prevent>
         <el-form-item label="标签名称" prop="name">
           <el-input
             v-model="form.name"
@@ -75,7 +72,7 @@
             />
           </div>
         </el-form-item>
-        <el-form-item label="说明" prop="description">
+        <el-form-item label="说明">
           <el-input
             v-model="form.description"
             type="textarea"
@@ -254,13 +251,22 @@ onBeforeUnmount(() => {
 
 <style scoped>
 .page-card {
-  border-radius: 12px;
+  border-radius: 14px;
 }
 
 .card-header {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: space-between;
+}
+
+.card-header h2 {
+  margin: 0 0 6px;
+}
+
+.card-header p {
+  margin: 0;
+  color: #64748b;
 }
 
 .error-alert {

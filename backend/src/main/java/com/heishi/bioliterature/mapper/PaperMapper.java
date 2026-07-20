@@ -3,9 +3,12 @@ package com.heishi.bioliterature.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.heishi.bioliterature.dto.BiomedicalEntitySummary;
 import com.heishi.bioliterature.dto.PaperDetailResponse.AuthorSummary;
 import com.heishi.bioliterature.dto.PaperDetailResponse.KeywordSummary;
 import com.heishi.bioliterature.dto.PaperDetailResponse.TagSummary;
+import com.heishi.bioliterature.dto.PaperReferenceSummary;
+import com.heishi.bioliterature.dto.TopicSummary;
 import com.heishi.bioliterature.entity.Paper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -118,4 +121,37 @@ public interface PaperMapper extends BaseMapper<Paper> {
             ORDER BY t.name ASC, t.id ASC
             """)
     List<TagSummary> selectTagsByPaperId(@Param("paperId") Long paperId);
+
+    @Select("""
+            SELECT tp.id, tp.name
+            FROM topic_paper rel
+            INNER JOIN topic tp ON tp.id = rel.topic_id
+            WHERE rel.paper_id = #{paperId}
+            ORDER BY tp.name ASC, tp.id ASC
+            """)
+    List<TopicSummary> selectTopicsByPaperId(@Param("paperId") Long paperId);
+
+    @Select("""
+            SELECT be.id, be.entity_name, be.entity_type
+            FROM paper_entity pe
+            INNER JOIN biomedical_entity be ON be.id = pe.entity_id
+            WHERE pe.paper_id = #{paperId}
+            ORDER BY be.entity_type ASC, be.entity_name ASC
+            """)
+    List<BiomedicalEntitySummary> selectEntitiesByPaperId(@Param("paperId") Long paperId);
+
+    @Select("""
+            SELECT
+                pr.id,
+                pr.cited_paper_id,
+                pr.cited_pmid,
+                pr.cited_doi,
+                pr.citation_text,
+                cited.title AS cited_title
+            FROM paper_reference pr
+            LEFT JOIN paper cited ON cited.id = pr.cited_paper_id
+            WHERE pr.paper_id = #{paperId}
+            ORDER BY pr.id ASC
+            """)
+    List<PaperReferenceSummary> selectReferencesByPaperId(@Param("paperId") Long paperId);
 }

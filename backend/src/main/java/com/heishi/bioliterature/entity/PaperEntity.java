@@ -8,30 +8,20 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@TableName("paper")
-public class Paper {
-
+@TableName("paper_entity")
+public class PaperEntity {
     @TableId(type = IdType.AUTO)
     private Long id;
-
-    private String title;
-    private String titleZh;
-    private String abstractText;
-    private String abstractZh;
-    private String journal;
-    private Integer publicationYear;
-    private String doi;
-    private String pmid;
-    private String pmcid;
-    private String dataSource;
-    private String pdfUrl;
-    private String fullTextUrl;
+    private Long paperId;
+    private Long entityId;
+    private String source;
+    private BigDecimal confidence;
     private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
 }

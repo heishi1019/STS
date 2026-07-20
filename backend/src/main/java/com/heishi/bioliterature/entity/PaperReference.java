@@ -14,24 +14,14 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@TableName("paper")
-public class Paper {
-
+@TableName("paper_reference")
+public class PaperReference {
     @TableId(type = IdType.AUTO)
     private Long id;
-
-    private String title;
-    private String titleZh;
-    private String abstractText;
-    private String abstractZh;
-    private String journal;
-    private Integer publicationYear;
-    private String doi;
-    private String pmid;
-    private String pmcid;
-    private String dataSource;
-    private String pdfUrl;
-    private String fullTextUrl;
+    private Long paperId;
+    private Long citedPaperId;
+    private String citedPmid;
+    private String citedDoi;
+    private String citationText;
     private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
 }

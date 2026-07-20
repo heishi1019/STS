@@ -4,6 +4,24 @@ import { ElMessage } from 'element-plus'
 const http = axios.create({
   baseURL: '/api',
   timeout: 15000,
+  paramsSerializer: {
+    serialize(params) {
+      const searchParams = new URLSearchParams()
+      Object.entries(params || {}).forEach(([key, value]) => {
+        if (value === undefined || value === null || value === '') return
+        if (Array.isArray(value)) {
+          value.forEach((item) => {
+            if (item !== undefined && item !== null && item !== '') {
+              searchParams.append(key, item)
+            }
+          })
+          return
+        }
+        searchParams.append(key, value)
+      })
+      return searchParams.toString()
+    },
+  },
 })
 
 http.interceptors.response.use(
@@ -26,6 +44,14 @@ export function getPapers(params) {
 
 export function getPaperById(id) {
   return http.get(`/papers/${id}`)
+}
+
+export function searchPapers(params) {
+  return http.get('/search/papers', { params })
+}
+
+export function getSearchFacets() {
+  return http.get('/search/facets')
 }
 
 export function getPaperTags(paperId) {
@@ -95,6 +121,8 @@ export function showRequestError(error, fallback = '数据加载失败') {
 export default {
   getPapers,
   getPaperById,
+  searchPapers,
+  getSearchFacets,
   getPaperTags,
   addPaperTag,
   removePaperTag,

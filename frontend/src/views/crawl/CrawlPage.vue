@@ -2,8 +2,11 @@
   <el-card shadow="never" class="page-card">
     <template #header>
       <div class="card-header">
-        <span>采集任务</span>
-        <el-button @click="$router.push('/papers')">查看文献列表</el-button>
+        <div>
+          <h2>采集任务</h2>
+          <p>从 PubMed 采集真实文献并写入 MySQL，采集结果会进入综合搜索和文献工作台。</p>
+        </div>
+        <el-button @click="$router.push('/literature')">查看文献工作台</el-button>
       </div>
     </template>
 
@@ -24,14 +27,7 @@
       :closable="false"
     />
 
-    <el-form
-      ref="formRef"
-      :model="form"
-      :rules="rules"
-      label-width="120px"
-      class="crawl-form"
-      @submit.prevent
-    >
+    <el-form ref="formRef" :model="form" :rules="rules" label-width="120px" class="crawl-form" @submit.prevent>
       <el-form-item label="数据源">
         <el-select v-model="form.dataSource" disabled>
           <el-option label="PubMed" value="pubmed" />
@@ -61,11 +57,7 @@
       </el-form-item>
 
       <el-form-item>
-        <el-button
-          type="primary"
-          :loading="submitting"
-          @click="submitForm"
-        >
+        <el-button type="primary" :loading="submitting" @click="submitForm">
           开始采集
         </el-button>
         <el-button :disabled="submitting" @click="resetForm">重置</el-button>
@@ -188,13 +180,22 @@ function resetForm() {
 
 <style scoped>
 .page-card {
-  border-radius: 12px;
+  border-radius: 14px;
 }
 
 .card-header {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: space-between;
+}
+
+.card-header h2 {
+  margin: 0 0 6px;
+}
+
+.card-header p {
+  margin: 0;
+  color: #64748b;
 }
 
 .tip-alert {
@@ -202,7 +203,7 @@ function resetForm() {
 }
 
 .crawl-form {
-  max-width: 720px;
+  max-width: 760px;
 }
 
 .form-help {

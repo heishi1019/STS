@@ -53,14 +53,21 @@ public class PaperServiceImpl extends ServiceImpl<PaperMapper, Paper> implements
         return PaperDetailResponse.builder()
                 .id(paper.getId())
                 .title(paper.getTitle())
+                .titleZh(paper.getTitleZh())
                 .abstractText(paper.getAbstractText())
+                .abstractZh(paper.getAbstractZh())
                 .journal(paper.getJournal())
                 .publishYear(paper.getPublicationYear())
                 .doi(paper.getDoi())
                 .pmid(paper.getPmid())
+                .pdfUrl(paper.getPdfUrl())
+                .fullTextUrl(paper.getFullTextUrl())
                 .authors(baseMapper.selectAuthorsByPaperId(id))
                 .keywords(baseMapper.selectKeywordsByPaperId(id))
                 .tags(baseMapper.selectTagsByPaperId(id))
+                .topics(baseMapper.selectTopicsByPaperId(id))
+                .entities(baseMapper.selectEntitiesByPaperId(id))
+                .references(baseMapper.selectReferencesByPaperId(id))
                 .build();
     }
 

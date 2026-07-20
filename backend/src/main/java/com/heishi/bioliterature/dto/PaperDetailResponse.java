@@ -15,14 +15,21 @@ public class PaperDetailResponse {
 
     private Long id;
     private String title;
+    private String titleZh;
     private String abstractText;
+    private String abstractZh;
     private String journal;
     private Integer publishYear;
     private String doi;
     private String pmid;
+    private String pdfUrl;
+    private String fullTextUrl;
     private List<AuthorSummary> authors;
     private List<KeywordSummary> keywords;
     private List<TagSummary> tags;
+    private List<TopicSummary> topics;
+    private List<BiomedicalEntitySummary> entities;
+    private List<PaperReferenceSummary> references;
 
     @Data
     @Builder

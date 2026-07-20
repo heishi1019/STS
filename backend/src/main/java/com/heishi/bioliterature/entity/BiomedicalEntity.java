@@ -14,24 +14,13 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@TableName("paper")
-public class Paper {
-
+@TableName("biomedical_entity")
+public class BiomedicalEntity {
     @TableId(type = IdType.AUTO)
     private Long id;
-
-    private String title;
-    private String titleZh;
-    private String abstractText;
-    private String abstractZh;
-    private String journal;
-    private Integer publicationYear;
-    private String doi;
-    private String pmid;
-    private String pmcid;
-    private String dataSource;
-    private String pdfUrl;
-    private String fullTextUrl;
+    private String entityName;
+    private String entityType;
+    private String description;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

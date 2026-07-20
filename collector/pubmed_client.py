@@ -144,6 +144,29 @@ def parse_keywords(article: ET.Element) -> list[dict[str, Any]]:
     return list(result.values())
 
 
+def parse_references(article: ET.Element) -> list[dict[str, Any]]:
+    result: list[dict[str, Any]] = []
+    for node in article.findall(".//PubmedData/ReferenceList/Reference"):
+        cited_pmid = None
+        cited_doi = None
+        for article_id_node in node.findall("./ArticleIdList/ArticleId"):
+            id_type = article_id_node.attrib.get("IdType", "").lower()
+            if id_type == "pubmed":
+                cited_pmid = text(article_id_node)
+            elif id_type == "doi":
+                cited_doi = text(article_id_node)
+        citation_text = text(node.find("./Citation"))
+        if cited_pmid or cited_doi or citation_text:
+            result.append(
+                {
+                    "cited_pmid": cited_pmid,
+                    "cited_doi": cited_doi,
+                    "citation_text": citation_text,
+                }
+            )
+    return result
+
+
 def parse_xml(payload: bytes | str) -> list[dict[str, Any]]:
     try:
         root = ET.fromstring(payload)
@@ -180,6 +203,7 @@ def parse_xml(payload: bytes | str) -> list[dict[str, Any]]:
                 ),
                 "authors": parse_authors(item),
                 "keywords": parse_keywords(item),
+                "references": parse_references(item),
             }
         )
     return papers

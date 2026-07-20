@@ -21,15 +21,34 @@
 
       <template v-if="paper">
         <el-descriptions :column="2" border>
-          <el-descriptions-item label="标题" :span="2">
+          <el-descriptions-item label="英文标题" :span="2">
             {{ paper.title || '-' }}
+          </el-descriptions-item>
+          <el-descriptions-item label="中文标题" :span="2">
+            {{ paper.titleZh || '暂无中文翻译标题' }}
           </el-descriptions-item>
           <el-descriptions-item label="期刊">{{ paper.journal || '-' }}</el-descriptions-item>
           <el-descriptions-item label="发表年份">{{ paper.publishYear || '-' }}</el-descriptions-item>
           <el-descriptions-item label="DOI">{{ paper.doi || '-' }}</el-descriptions-item>
           <el-descriptions-item label="PMID">{{ paper.pmid || '-' }}</el-descriptions-item>
-          <el-descriptions-item label="摘要" :span="2">
-            {{ paper.abstractText || '暂无摘要' }}
+          <el-descriptions-item label="英文摘要" :span="2">
+            {{ paper.abstractText || '暂无英文摘要' }}
+          </el-descriptions-item>
+          <el-descriptions-item label="中文摘要" :span="2">
+            {{ paper.abstractZh || '暂无中文翻译摘要' }}
+          </el-descriptions-item>
+          <el-descriptions-item label="原文链接" :span="2">
+            <el-space wrap>
+              <el-button v-if="paper.pdfUrl" type="success" @click="openExternal(paper.pdfUrl)">
+                PDF 下载
+              </el-button>
+              <el-button v-if="paper.fullTextUrl" type="primary" plain @click="openExternal(paper.fullTextUrl)">
+                全文链接
+              </el-button>
+              <span v-if="!paper.pdfUrl && !paper.fullTextUrl" class="empty-text">
+                暂无 PDF 或全文链接
+              </span>
+            </el-space>
           </el-descriptions-item>
         </el-descriptions>
 
@@ -50,6 +69,18 @@
               {{ keyword.keyword || '-' }}
             </el-tag>
             <span v-if="keywords.length === 0" class="empty-text">暂无关键词</span>
+          </el-space>
+        </section>
+
+        <section class="detail-section">
+          <h3>生物医学知识实体</h3>
+          <el-space wrap>
+            <el-tag v-for="entity in entities" :key="entity.id" type="warning">
+              {{ entity.entityType }}：{{ entity.entityName }}
+            </el-tag>
+            <span v-if="entities.length === 0" class="empty-text">
+              暂无疾病、基因、药物或症状索引
+            </span>
           </el-space>
         </section>
 
@@ -93,6 +124,46 @@
             </el-tag>
             <span v-if="paperTopics.length === 0" class="empty-text">暂无专题</span>
           </el-space>
+        </section>
+
+        <section class="detail-section">
+          <h3>参考文献</h3>
+          <el-empty v-if="references.length === 0" description="暂无参考文献链接" />
+          <div v-for="reference in references" :key="reference.id" class="reference-item">
+            <div class="reference-title">
+              {{ reference.citedTitle || reference.citationText || '未命名参考文献' }}
+            </div>
+            <div class="reference-meta">
+              <span v-if="reference.citedPmid">PMID: {{ reference.citedPmid }}</span>
+              <span v-if="reference.citedDoi">DOI: {{ reference.citedDoi }}</span>
+            </div>
+            <el-space>
+              <el-button
+                v-if="reference.citedPaperId"
+                link
+                type="primary"
+                @click="goInternalReference(reference.citedPaperId)"
+              >
+                查看本地文献
+              </el-button>
+              <el-button
+                v-if="reference.citedPmid"
+                link
+                type="primary"
+                @click="openExternal(`https://pubmed.ncbi.nlm.nih.gov/${reference.citedPmid}/`)"
+              >
+                打开 PubMed
+              </el-button>
+              <el-button
+                v-if="reference.citedDoi"
+                link
+                type="primary"
+                @click="openExternal(`https://doi.org/${reference.citedDoi}`)"
+              >
+                打开 DOI
+              </el-button>
+            </el-space>
+          </div>
         </section>
       </template>
     </div>
@@ -193,7 +264,7 @@
 
 <script setup>
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 
 import {
@@ -210,6 +281,7 @@ import {
 } from '../../api/paper'
 
 const route = useRoute()
+const router = useRouter()
 
 const paper = ref(null)
 const loading = ref(false)
@@ -232,6 +304,8 @@ let active = true
 const authors = computed(() => (Array.isArray(paper.value?.authors) ? paper.value.authors : []))
 const keywords = computed(() => (Array.isArray(paper.value?.keywords) ? paper.value.keywords : []))
 const tags = computed(() => (Array.isArray(paper.value?.tags) ? paper.value.tags : []))
+const entities = computed(() => (Array.isArray(paper.value?.entities) ? paper.value.entities : []))
+const references = computed(() => (Array.isArray(paper.value?.references) ? paper.value.references : []))
 
 function currentPaperId() {
   return route.params.id
@@ -255,6 +329,7 @@ async function loadPaperDetail() {
       errorMessage.value = '文献不存在'
       paperTopics.value = []
     } else {
+      paperTopics.value = Array.isArray(paper.value.topics) ? paper.value.topics : []
       await loadPaperTopics(id)
     }
   } catch (error) {
@@ -283,7 +358,6 @@ async function loadPaperTopics(paperId = currentPaperId()) {
     paperTopics.value = Array.isArray(result?.data) ? result.data : []
   } catch (error) {
     if (!active) return
-    paperTopics.value = []
     showRequestError(error, '文献专题加载失败')
   } finally {
     if (active) {
@@ -438,6 +512,16 @@ function resetTopicDialog() {
   allTopics.value = []
 }
 
+function openExternal(url) {
+  if (!url) return
+  window.open(url, '_blank', 'noopener,noreferrer')
+}
+
+function goInternalReference(paperId) {
+  if (!paperId) return
+  router.push({ name: 'paper-detail', params: { id: paperId } })
+}
+
 onMounted(loadPaperDetail)
 
 watch(
@@ -491,5 +575,27 @@ onBeforeUnmount(() => {
 .empty-text {
   color: #909399;
   font-size: 14px;
+}
+
+.reference-item {
+  padding: 12px 0;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.reference-item:last-child {
+  border-bottom: none;
+}
+
+.reference-title {
+  color: #111827;
+  line-height: 1.6;
+}
+
+.reference-meta {
+  display: flex;
+  gap: 12px;
+  margin: 6px 0;
+  color: #6b7280;
+  font-size: 13px;
 }
 </style>
